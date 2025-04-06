@@ -14,12 +14,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Client {
-  id BigInt @id @default(autoincrement())
+model client {
+  id Int @id @default(autoincrement())
   documento String @unique
   email String @unique
-  first_name String
-  last_name String
+  nome String
+  telefone String
   bairro String
   rua String
   cidade String
