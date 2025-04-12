@@ -24,4 +24,7 @@ model client {
   rua String
   cidade String
   cep String
+  criado_em DateTime @default(now())
+  numero Int
+  complemento String
 }

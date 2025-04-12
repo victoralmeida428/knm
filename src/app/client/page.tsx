@@ -6,42 +6,40 @@ import Table from "@/components/table/table";
 import Loading from "@/components/loading/loading";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faEnvelope, faLocationDot, faPhone, faSearch, faUser} from "@fortawesome/free-solid-svg-icons";
 import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
 import Modal from "@/components/modal/modal";
+import ClientRegister from "@/app/client/formRegister";
+import FormField from "@/components/form/Formulario";
+import Button from "@/components/button/button";
+import {DetailedClient} from "@/app/client/modalDetailed";
+import RegisterClient from "@/app/client/modalRegister";
 
 export default function ClientPage() {
     const [clients, setClients] = useState<client[]>([])
     const [clientsFilter, setClientsFilter] = useState<client[]>([])
     const [loading, setLoading] = useState(true)
-    const [open, setOpen] = useState(false)
-    const headers = <tr>
-        <th>Nome</th>
-        <th>Telefone</th>
-        <th>Email</th>
-        <th>Documento</th>
-        <th>Cidade</th>
-        <th>Bairro</th>
-        <th>Rua</th>
-        <th>CEP</th>
-        <th></th>
-    </tr>
+    const [openRegister, setOpenRegister] = useState(false)
+    const [openClient, setOpenClient] = useState(false)
+    const [clientChoice, setClient] = useState<client>();
+    const [errorMap, setErrorMap] = useState<boolean>(false);
+    const fetchClients = async () => {
+        try {
+            const response = await fetch('/api/clients')
+            const data: client[] = await response.json()
+            if (Array.isArray(data)) {
+                setClients(data)
+                setClientsFilter(data)
+            }
+        } catch (error) {
+            console.error('Error fetching clients:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
-        const fetchClients = async () => {
-            try {
-                const response = await fetch('/api/clients')
-                const data: client[] = await response.json()
-                if (Array.isArray(data)) {
-                    setClients(data)
-                    setClientsFilter(data)
-                }
-            } catch (error) {
-                console.error('Error fetching clients:', error)
-            } finally {
-                setLoading(false)
-            }
-        }
+
         fetchClients()
     }, [])
 
@@ -71,53 +69,96 @@ export default function ClientPage() {
             /> :
             <div className={'mt-5 flex flex-col justify-content-start  items-start w-full h-full'}>
                 <div className={'flex justify-between w-full px-10'}>
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <FontAwesomeIcon icon={faSearch}/>
-                        </div>
-                        <input
-                            className="
-                          border-primary
-                          border
-                          rounded
-                          placeholder:text-gray-500
-                          ps-10  /* Aumente o padding esquerdo para o ícone */
-                          py-2
-                          w-full
-                          focus:outline-none
-                          focus:ring-1
-                          focus:ring-primary
-                        "
-                            type='text'
-                            placeholder='Buscar'
-                            onChange={(e) => handleFilter(e.target.value)}
-                        />
-                    </div>
-                    <button
-                        className={'bg-primary px-5 text-white rounded cursor-pointer h-8 hover:bg-blue-900'}
-                        onClick={() => {setOpen(true)}}
+                    <FormField
+                        icon={<FontAwesomeIcon icon={faSearch}/>}
+                        placeholder='Buscar'
+                        type='text'
+                        onChange={(e) => handleFilter(e.target.value!)}
+                    />
+                    <Button
+                        mode={'primary'}
+                        onClick={() => {
+                            setOpenRegister(true)
+                        }}
                     >
                         <span><FontAwesomeIcon icon={faPlus}/></span> Cadastrar
-                    </button>
+                    </Button>
                 </div>
                 <div className={'w-full p-2'}>
-                    <Modal isOpen={open} onClose={()=>{setOpen(false)}}>Teste</Modal>
-                    <Table className={'p-20 select-none'} headers={headers}
-                           rows={clientsFilter.map((client: client) => (
-                               <tr key={client.id} className={client.id % 2 == 1 ? 'bg-gray-300' : ''}>
-                                   <td className={'select-text'}>{client.nome}</td>
-                                   <td className={'select-text'}>{client.telefone}</td>
-                                   <td className={'select-text'}>{client.email}</td>
-                                   <td className={'select-text'}>{client.documento}</td>
-                                   <td className={'select-text'}>{client.cidade}</td>
-                                   <td className={'select-text'}>{client.bairro}</td>
-                                   <td className={'select-text'}>{client.rua}</td>
-                                   <td className={'select-text'}>{client.cep}</td>
-                                   <td className={'select-text'}><FontAwesomeIcon color={'red'}
-                                                                                  className={'cursor-pointer'}
-                                                                                  icon={faTrashCan}/></td>
-                               </tr>))
-                           }/>
+                    <RegisterClient
+                        client={clientChoice}
+                        openRegister={openRegister}
+                        onClose={() => {
+                            setOpenRegister(false)
+                            setClient(undefined)
+                        }}
+                        fetchClients={fetchClients}
+                        closeModal={() => {
+                            if (clientChoice) setOpenRegister(false)
+                        }}/>
+                    <DetailedClient
+                        openClient={openClient}
+                        client={clientChoice}
+                        onClose={() => {
+                            setOpenClient(false)
+                            setClient(undefined)
+                        }}
+                        onEdit={() => {
+                            setOpenClient(false)
+                            setOpenRegister(true)
+                        }}
+                    />
+                    <Table className={'select-none'}>
+                        <Table.Header>
+                            <Table.Row className={"bg-primary text-white"}>
+                                <Table.HeadCell>Documento</Table.HeadCell>
+                                <Table.HeadCell>Nome</Table.HeadCell>
+                                <Table.HeadCell>Telefone</Table.HeadCell>
+                                <Table.HeadCell>Email</Table.HeadCell>
+                                <Table.HeadCell> </Table.HeadCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+
+                            {clientsFilter.map((client, index) => (
+                                <Table.Row
+                                    key={index}
+                                    hoverEffect={false}
+                                    className={index % 2 == 1 ? 'bg-gray-300' : ''}>
+                                    <Table.Cell className={'select-text text-sm text-center '}>
+                                        <span className={`underline cursor-pointer text-primary`}
+                                              onClick={() => {
+                                                  setOpenClient(true)
+                                                  setClient(client)
+                                              }}
+                                        >{client.documento}</span>
+                                    </Table.Cell>
+                                    <Table.Cell className={'select-text text-sm text-center'}>{client.nome}</Table.Cell>
+                                    <Table.Cell
+                                        className={'select-text text-sm text-center'}>{client.telefone}</Table.Cell>
+                                    <Table.Cell
+                                        className={'select-text text-sm text-center'}>{client.email}</Table.Cell>
+                                    <Table.Cell className={'select-text text-sm text-center'}>
+                                        <FontAwesomeIcon color={'red'}
+                                                         className={'cursor-pointer'}
+                                                         icon={faTrashCan}
+                                                         onClick={async () => {
+                                                             await fetch('/api/clients',
+                                                                 {
+                                                                     method: 'DELETE',
+                                                                     headers: {
+                                                                         'Content-Type': 'application/json'
+                                                                     },
+                                                                     body: JSON.stringify(client)
+                                                                 })
+                                                             await fetchClients()
+                                                         }}
+                                        />
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </div>
             </div>
     );

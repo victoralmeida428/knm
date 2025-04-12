@@ -1,14 +1,16 @@
 -- CreateTable
 CREATE TABLE if not exists client (
     "id" serial NOT NULL primary key,
-    "documento" TEXT NOT NULL unique ,
-    "email" TEXT NOT NULL unique,
-    "nome" TEXT NOT NULL,
-    "telefone" TEXT NOT NULL,
-    "bairro" TEXT NOT NULL,
-    "rua" TEXT NOT NULL,
-    "cidade" TEXT NOT NULL,
-    "cep" TEXT NOT NULL,
-    "created_at" timestamp default now()
+    "documento" character varying(25) NOT NULL unique ,
+    "email" character varying NOT NULL unique,
+    "nome" character varying NOT NULL,
+    "telefone" character varying(50) NOT NULL,
+    "bairro" character varying NOT NULL,
+    "rua" character varying NOT NULL,
+    "cidade" character varying NOT NULL,
+    "cep" character varying(9) NOT NULL,
+    "numero" integer,
+    complemento character varying,
+    "criado_em" timestamp default now()
 );
 
