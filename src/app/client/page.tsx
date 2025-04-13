@@ -6,10 +6,8 @@ import Table from "@/components/table/table";
 import Loading from "@/components/loading/loading";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-regular-svg-icons";
-import {faEnvelope, faLocationDot, faPhone, faSearch, faUser} from "@fortawesome/free-solid-svg-icons";
+import { faSearch} from "@fortawesome/free-solid-svg-icons";
 import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
-import Modal from "@/components/modal/modal";
-import ClientRegister from "@/app/client/formRegister";
 import FormField from "@/components/form/Formulario";
 import Button from "@/components/button/button";
 import {DetailedClient} from "@/app/client/modalDetailed";
@@ -22,7 +20,6 @@ export default function ClientPage() {
     const [openRegister, setOpenRegister] = useState(false)
     const [openClient, setOpenClient] = useState(false)
     const [clientChoice, setClient] = useState<client>();
-    const [errorMap, setErrorMap] = useState<boolean>(false);
     const fetchClients = async () => {
         try {
             const response = await fetch('/api/clients')
