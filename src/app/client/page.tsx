@@ -73,6 +73,7 @@ export default function ClientPage() {
                         onChange={(e) => handleFilter(e.target.value!)}
                     />
                     <Button
+                        id={'registerClientBtn'}
                         mode={'primary'}
                         onClick={() => {
                             setOpenRegister(true)

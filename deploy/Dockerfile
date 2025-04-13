@@ -10,7 +10,7 @@ WORKDIR /app
 # Instalação do Prisma globalmente para geração do client
 RUN npm install -g prisma
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY ../package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
@@ -19,7 +19,7 @@ RUN \
   fi
 
 # Copie o schema.prisma e gere o client
-COPY prisma ./prisma
+COPY ../prisma ./prisma
 RUN prisma generate
 
 # Etapa de build
@@ -27,9 +27,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
-COPY ./.env.prod ./.env
+COPY ../.env.prod ./.env
 
-COPY . .
+COPY .. .
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
@@ -49,7 +49,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY prisma ./prisma
+COPY ../prisma ./prisma
 USER nextjs
 
 EXPOSE 3000

@@ -2,22 +2,21 @@ FROM node:20
 
 WORKDIR /opt/knm
 
-# First copy only the files needed for installation
-COPY ../package.json package-lock.json* ./
+# Primeiro copia apenas os arquivos necessários para instalação
+COPY package.json package-lock.json* ./
 
-# Install dependencies including Prisma CLI
+# Instala dependências incluindo Prisma CLI
 RUN npm install
-RUN npm install -g prisma  # Install Prisma CLI globally
+RUN npm install -g prisma
 
-# Copy Prisma schema
-COPY ../prisma ./prisma
+# Copia schema do Prisma
+COPY prisma ./prisma
 
-# Copy the rest of the files
-COPY .. .
+# Copia arquivos .env separadamente
+COPY .env.dev .env
 
-RUN mv ./.env.dev ./.env
-# Generate Prisma client and run migrations
-# RUN npx prisma
-# Command to start the application
-#
-CMD npx prisma migrate deploy && npx next dev
+# Copia o resto dos arquivos (excluindo o que já foi copiado)
+COPY . .
+
+# Gera cliente Prisma e executa migrações
+CMD npx prisma generate && npx prisma migrate deploy && npx next dev

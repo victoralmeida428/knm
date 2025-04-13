@@ -1,8 +1,8 @@
 services:
   web:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: ./deploy/Dockerfile
     ports:
       - "3000:3000"
     depends_on:
@@ -10,13 +10,13 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres:15
+    image: postgres:17
     restart: always
     shm_size: 128mb
     ports:
       - "5430:5432"
     environment:
-      POSTGRES_PASSWORD: knm_senha
+      POSTGRES_PASSWORD: 7Bn9qRt2XkLp4yV8wZ3d6Hs5Jm1PcN
       POSTGRES_USER: knm_admin
       POSTGRES_DB: knm
     volumes:

@@ -2,17 +2,18 @@ services:
   web:
     build:
       context: ../
-      dockerfile: ./Dockerfile
+      dockerfile: ./dev/Dockerfile
 
     command: sh -c "npx prisma generate && npx prisma migrate deploy && npx next dev"
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ../:/opt/knm/
       - ../node_modules:/opt/knm/node_modules
       - ../.next/:/opt/knm/.next
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres
@@ -20,7 +21,7 @@ services:
     # set shared memory limit when using docker-compose
     shm_size: 128mb
     ports:
-      - "5430:5432"
+      - "5431:5432"
     environment:
       POSTGRES_PASSWORD: knm_senha
       POSTGRES_USER: knm_admin
