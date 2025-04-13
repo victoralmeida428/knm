@@ -3,6 +3,10 @@
  - .env.prod (Production)
  - .env.dev (Development)
 
+## Run Tests
+````bash
+npm run test
+````
 ## Dev
 
 ```bash
