@@ -34,16 +34,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html
-            lang="pt-br"
-            data-kantu="1"
-        >
-        <body
-            className={`${geistSans.variable} ${geistMono.variable} bg-amber-50`}
-        >
-        <div className="grid grid-flow-col grid-cols-12 gap-2">
-            <MenuLateral className={"col-span-2"}/>
-            <section className={"col-span-10"}>{children}</section>
+        <html lang="pt-br" data-kantu="1">
+        <body className="font-sans bg-amber-50">
+        <div className="grid grid-cols-1 gap-2 md:grid-flow-col md:grid-cols-12">
+            <MenuLateral className="hidden md:block md:col-span-2"/>
+            <section className="col-span-12 md:col-span-10">{children}</section>
         </div>
         </body>
         </html>

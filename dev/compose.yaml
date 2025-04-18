@@ -6,7 +6,7 @@ services:
 
     command: sh -c "npx prisma generate && npx prisma migrate deploy && npx next dev"
     ports:
-      - "3001:3000"
+      - "192.168.1.14:3000:3000"
     volumes:
       - ../:/opt/knm/
       - ../node_modules:/opt/knm/node_modules
